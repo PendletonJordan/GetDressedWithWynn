@@ -60,9 +60,9 @@ const MONTHS = ["January","February","March","April","May","June","July","August
 const today = new Date();
 
 const INITIAL_PROFILE = {
-  name: "Liam",
-  age: 10,
-  school: "Raleigh Elementary",
+  name: "Wynn",
+  age: 6,
+  school: "Lacy Elementary",
   favoriteColors: ["blue","green"],
   alexaEnabled: true,
   wakeTime: "7:00 AM",

@@ -44,6 +44,8 @@ export async function getWeather(city) {
     rain: data.rain ? Math.round((data.rain["1h"] || 0) * 10) : getRainChance(forecast),
     wind: Math.round(data.wind.speed),
     humidity: data.main.humidity,
+    city: data.name,
+    country: data.sys.country,
   };
 }
 

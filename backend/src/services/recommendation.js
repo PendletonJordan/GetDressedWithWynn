@@ -33,16 +33,18 @@ export async function generateRecommendation(profileId) {
   const otherEvents = (events || []).filter((e) => e.type === "other");
 
   // 3. Get live weather
+  // Strip state from city string — OpenWeatherMap prefers "Raleigh" over "Raleigh, NC"
+  const cityForWeather = profile.city.split(",")[0].trim();
   let weather;
   try {
-    weather = await getWeather(profile.city);
+    weather = await getWeather(cityForWeather);
   } catch {
     // Fall back to a neutral default so we don't block the whole recommendation
     weather = { temp: 65, high: 70, low: 55, condition: "Partly Cloudy", rain: 10, wind: 8 };
   }
 
   // 4. Build Claude prompt
-  const prompt = `You are a friendly morning outfit assistant helping a ${profile.age}-year-old child named ${profile.name} who goes to ${profile.school} in ${profile.city}.
+  const prompt = `You are a practical morning outfit assistant helping a ${profile.age}-year-old child named ${profile.name} who goes to ${profile.school}.
 
 Today is ${new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}.
 
@@ -55,25 +57,32 @@ Today's context:
 - Other events: ${otherEvents.length > 0 ? otherEvents.map((e) => e.label).join(", ") : "None"}
 - ${profile.name}'s favorite colors: ${(profile.favorite_colors || []).join(", ")}
 
-Rules:
-- If there's a spirit day, the outfit MUST follow the theme
-- If there's a sport later, prioritize athletic/comfortable clothing they can move in or change from easily
-- Account for morning temperature (kids often walk to school) — suggest a jacket if below 60°F or rain is likely
-- Keep it practical and age-appropriate
-- Be encouraging and fun in tone
+Clothing rules — always use these generic categories, never specific brands or styles:
+- Top: "short sleeve shirt" (65°F+), "long sleeve shirt" (50–65°F), or "sweatshirt" (below 50°F)
+- Bottom: "shorts" (70°F+), "pants" (below 70°F)
+- Outerwear (only include if needed):
+    - "light jacket" if 50–60°F or windy
+    - "cold weather jacket" if below 50°F
+    - "rain jacket" if rain chance is 40%+ regardless of temp
+- Footwear: "sneakers" normally, "rain boots" if rain chance is 60%+
+- If there's a spirit day the outfit MUST follow the theme — mention the color or theme in the label (e.g. "blue long sleeve shirt")
+- If there's a sport, recommend bottoms they can move in (always "athletic shorts" or "athletic pants" for sports days regardless of temp — they can change)
+- Always recommend exactly 3 or 4 items total — no more
+- Never recommend both a light jacket AND a cold weather jacket
+- Never recommend both shorts AND pants
 
 Respond ONLY with a valid JSON object (no markdown, no backticks):
 {
   "title": "short catchy outfit title",
   "outfit": [
-    {"icon": "single emoji", "label": "item name", "note": "optional short tip"},
-    {"icon": "single emoji", "label": "item name", "note": "optional short tip"},
-    {"icon": "single emoji", "label": "item name", "note": "optional short tip"},
-    {"icon": "single emoji", "label": "item name", "note": "optional short tip"}
+    {"icon": "single emoji", "label": "generic item name", "note": "one short practical tip"},
+    {"icon": "single emoji", "label": "generic item name", "note": "one short practical tip"},
+    {"icon": "single emoji", "label": "generic item name", "note": "one short practical tip"},
+    {"icon": "single emoji", "label": "generic item name", "note": "one short practical tip"}
   ],
-  "reasoning": "2-3 sentences explaining the choices, connecting weather + events in a kid-friendly way",
-  "alexaScript": "A warm, upbeat 2-3 sentence morning briefing written for a child. Mention what to wear, why, and any exciting event today. End with encouragement.",
-  "weatherSummary": "one short sentence about today's weather for display"
+  "reasoning": "2-3 sentences explaining the choices based on the weather and events, written for a parent",
+  "alexaScript": "A warm friendly 2-3 sentence morning briefing for a child. Say what to wear and why in simple terms. Mention any exciting event today. End with encouragement.",
+  "weatherSummary": "one short sentence summarizing today's weather"
 }`;
 
   const message = await client.messages.create({

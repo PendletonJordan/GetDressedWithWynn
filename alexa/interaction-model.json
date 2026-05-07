@@ -1,0 +1,40 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "what should i wear",
+      "intents": [
+        {
+          "name": "WhatToWearIntent",
+          "slots": [],
+          "samples": [
+            "what should I wear today",
+            "what should I wear",
+            "what do I wear today",
+            "what am I wearing today",
+            "what's my outfit today",
+            "tell me what to wear",
+            "what outfit should I wear",
+            "help me pick an outfit"
+          ]
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.FallbackIntent",
+          "samples": []
+        }
+      ],
+      "types": []
+    }
+  }
+}

@@ -6,10 +6,11 @@ const client = new Anthropic();
 /**
  * Takes a PDF buffer, extracts its text, then asks Claude to
  * pull out structured events (date, type, label, detail).
+ * Accepts optional parsingNotes to filter or contextualize results.
  *
  * Returns an array of event objects ready to insert into Supabase.
  */
-export async function parsePdfEvents(buffer, profileId) {
+export async function parsePdfEvents(buffer, profileId, parsingNotes = "") {
   // Step 1: Extract raw text from the PDF
   const { text } = await pdfParse(buffer);
 
@@ -26,19 +27,21 @@ export async function parsePdfEvents(buffer, profileId) {
         role: "user",
         content: `You are a helpful assistant that extracts school events and sports schedules from text.
 
-Extract all events from the following text. For each event, identify:
+${parsingNotes ? `Important context about this child:\n${parsingNotes}\n\nUse this context to filter results — for example if the child is on a specific team only include that team's games, ignore all other teams.` : ""}
+
+Extract all relevant events from the following text. For each event, identify:
 - date (in YYYY-MM-DD format, assume current year ${new Date().getFullYear()} if not specified)
 - type: one of "spirit" (spirit days, dress-up days, themed days) or "sports" (games, practices, meets) or "other"
-- label: short event name (e.g. "Pajama Day", "Soccer Game")  
+- label: short event name (e.g. "Pajama Day", "Soccer Game", "Tee Ball Game vs Tigers")
 - detail: brief extra info like time, location, or dress requirement
 
 Respond ONLY with a valid JSON array. No markdown, no explanation, just the array.
-If you find no events, return an empty array [].
+If you find no relevant events, return an empty array [].
 
 Example format:
 [
   {"date": "2026-05-21", "type": "spirit", "label": "Twin Day", "detail": "Dress like your best friend"},
-  {"date": "2026-05-28", "type": "sports", "label": "Track Meet", "detail": "9:00 AM - wear athletic gear"}
+  {"date": "2026-05-28", "type": "sports", "label": "Tee Ball Game vs Tigers", "detail": "9:00 AM - wear uniform"}
 ]
 
 Text to parse:

@@ -790,14 +790,16 @@ export default function App() {
     }
   };
 
-  const saveProfile = async (data) => {
-    try {
-      const updated = await api.updateProfile(data);
-      setProfile(updated);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
+const saveProfile = async (data) => {
+  console.log("Saving profile data:", data);
+  try {
+    await api.updateProfile(data);
+    const updated = await api.getProfile();
+    setProfile(updated);
+  } catch (err) {
+    setError(err.message);
+  }
+};
 
   const NAV = [
     { id: "today", icon: "☀️", label: "Today" },

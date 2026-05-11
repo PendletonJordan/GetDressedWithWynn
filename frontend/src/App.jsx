@@ -595,7 +595,13 @@ function ProfilePage({ profile, onSave }) {
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => { setForm({ ...profile }); }, [profile]);
+  useEffect(() => { 
+    setForm({ 
+      ...profile,
+      parsing_notes: profile.parsing_notes || "",
+      favorite_colors: profile.favorite_colors || [],
+    }); 
+  }, [profile]);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const colorOptions = ["blue", "green", "red", "yellow", "orange", "purple", "black", "white", "gray", "navy", "pink"];
@@ -620,7 +626,7 @@ function ProfilePage({ profile, onSave }) {
       <Card>
         <SectionTitle>👤 Child profile</SectionTitle>
         <div className="two-col" style={{ marginBottom: 16 }}>
-          {[["Name", "name", "text", "e.g. Wynn"], ["Age", "age", "number", "10"], ["School", "school", "text", "e.g. Raleigh Elementary"], ["City", "city", "text", "e.g. Raleigh"]].map(([label, key, type, placeholder]) => (
+          {[["Name", "name", "text", "e.g. Wynn"], ["Age", "age", "number", "10"], ["School", "school", "text", "e.g. Raleigh Elementary"], ["City or Zip", "city", "text", "e.g. Raleigh or 27601"]].map(([label, key, type, placeholder]) => (
             <div key={key}>
               <label style={{ fontSize: 12, color: "#8a8480", display: "block", marginBottom: 4 }}>{label}</label>
               <input type={type} value={form[key] || ""} onChange={(e) => set(key, type === "number" ? Number(e.target.value) : e.target.value)}
@@ -790,16 +796,16 @@ export default function App() {
     }
   };
 
-const saveProfile = async (data) => {
-  console.log("Saving profile data:", data);
-  try {
-    await api.updateProfile(data);
-    const updated = await api.getProfile();
-    setProfile(updated);
-  } catch (err) {
-    setError(err.message);
-  }
-};
+  const saveProfile = async (data) => {
+    try {
+      await api.updateProfile(data);
+      // Re-fetch the profile after saving to get the confirmed updated values
+      const updated = await api.getProfile();
+      setProfile(updated);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   const NAV = [
     { id: "today", icon: "☀️", label: "Today" },

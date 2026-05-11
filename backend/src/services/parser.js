@@ -14,10 +14,21 @@ const client = new Anthropic();
  */
 export async function parsePdfEvents(buffer, profileId, parsingNotes = "") {
   // Step 1: Extract raw text from the PDF
-  const { text } = await pdfParse(buffer);
+  let parsed;
+  try {
+    parsed = await pdfParse(buffer);
+  } catch (err) {
+    throw { code: "SCANNED_PDF" };
+  }
 
-  if (!text || text.trim().length < 20) {
-    throw new Error("Could not extract readable text from this PDF");
+  const text = parsed?.text || "";
+  const cleanText = text.replace(/\s+/g, " ").trim();
+
+  // A text-based PDF will have substantial readable content.
+  // Less than 100 meaningful characters almost always means a scanned image.
+  const meaningfulChars = cleanText.replace(/[^a-zA-Z0-9]/g, "").length;
+  if (meaningfulChars < 100) {
+    throw { code: "SCANNED_PDF" };
   }
 
   // Step 2: Ask Claude to find and structure the events

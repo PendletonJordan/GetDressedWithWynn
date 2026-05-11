@@ -51,6 +51,11 @@ uploadRouter.post("/:profileId", upload.single("file"), async (req, res) => {
     });
   } catch (err) {
     console.error("PDF parsing failed:", err);
-    res.status(500).json({ error: err.message });
+
+    if (err.code === "SCANNED_PDF") {
+      return res.status(400).json({ error: "SCANNED_PDF" });
+    }
+
+    res.status(500).json({ error: err.message || "Unexpected error during PDF parsing" });
   }
 });

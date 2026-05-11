@@ -57,7 +57,20 @@ ${text.slice(0, 8000)}
   const raw = message.content[0].text.trim();
 
   try {
-    const events = JSON.parse(raw);
+    // Strip any markdown code fences Claude may have added
+    const cleaned = raw
+      .replace(/```json/gi, "")
+      .replace(/```/g, "")
+      .trim();
+
+    // Extract just the JSON array in case there's surrounding text
+    const arrayMatch = cleaned.match(/\[[\s\S]*\]/);
+    if (!arrayMatch) {
+      console.error("No JSON array found in Claude response:", cleaned);
+      return []; // Return empty rather than crash
+    }
+
+    const events = JSON.parse(arrayMatch[0]);
     if (!Array.isArray(events)) throw new Error("Not an array");
 
     // Attach the profile id so they're scoped to this child

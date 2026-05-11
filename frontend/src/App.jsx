@@ -590,7 +590,23 @@ function ProfilePage({ profile, onSave }) {
           ))}
         </div>
         <div style={{ marginBottom: 16 }}>
-          <label style={{ fontSize: 12, color: "#8a8480", display: "block", marginBottom: 8 }}>Favorite colors</label>
+          <label style={{ fontSize: 12, color: "#8a8480", display: "block", marginBottom: 4 }}>Parsing notes</label>
+          <textarea
+            value={form.parsing_notes || ""}
+            onChange={(e) => set("parsing_notes", e.target.value)}
+            placeholder={`Help the AI filter uploaded schedules. Examples:\n- Wynn plays for the Red Sox in the 5-6 year old division\n- Only include Red Sox games, ignore all other teams\n- Wynn plays soccer for the Blue Thunder team`}
+            rows={5}
+            style={{
+              width: "100%", padding: "9px 12px", borderRadius: 8,
+              border: "1px solid #e0ddd8", fontSize: 13,
+              fontFamily: "'DM Sans', sans-serif", boxSizing: "border-box",
+              resize: "vertical", lineHeight: 1.6, color: "#4a4743"
+            }}
+          />
+          <div style={{ fontSize: 11, color: "#b0aca8", marginTop: 4 }}>
+            These notes are sent to the AI every time you upload a PDF to help it filter and contextualize events correctly.
+          </div>
+        </div>
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
             {colorOptions.map((c) => {
               const sel = (form.favorite_colors || []).includes(c);

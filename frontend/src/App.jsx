@@ -607,6 +607,8 @@ function ProfilePage({ profile, onSave }) {
             These notes are sent to the AI every time you upload a PDF to help it filter and contextualize events correctly.
           </div>
         </div>
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ fontSize: 12, color: "#8a8480", display: "block", marginBottom: 8 }}>Favorite colors</label>
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
             {colorOptions.map((c) => {
               const sel = (form.favorite_colors || []).includes(c);

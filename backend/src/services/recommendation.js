@@ -58,7 +58,7 @@ Today's context:
 - ${profile.name}'s favorite colors: ${(profile.favorite_colors || []).join(", ")}
 
 Clothing rules — always use these generic categories, never specific brands or styles:
-- Top: "short sleeve shirt" (65°F+), "long sleeve shirt" (50–65°F), or "sweatshirt" (below 50°F)
+- Top: "short sleeve shirt" (High temperature 65°F+), "long sleeve shirt" (High temperature below 65°F)
 - Bottom: "shorts" (70°F+), "pants" (below 70°F)
 - Outerwear (only include if needed):
     - "light jacket" if 50–60°F or windy
@@ -66,10 +66,11 @@ Clothing rules — always use these generic categories, never specific brands or
     - "rain jacket" if rain chance is 40%+ regardless of temp
 - Footwear: "sneakers" normally, "rain boots" if rain chance is 60%+
 - If there's a spirit day the outfit MUST follow the theme — mention the color or theme in the label (e.g. "blue long sleeve shirt")
-- If there's a sport, recommend bottoms they can move in (always "athletic shorts" or "athletic pants" for sports days regardless of temp — they can change)
+- If there's a sport other than golf, recommend bottoms they can move in (always "athletic shorts" or "athletic pants" for sports days regardless of temp — they can change)
 - Always recommend exactly 3 or 4 items total — no more
 - Never recommend both a light jacket AND a cold weather jacket
 - Never recommend both shorts AND pants
+- If there is a golf event during the day the shirt must be a collared shirt
 
 Respond ONLY with a valid JSON object (no markdown, no backticks):
 {
@@ -81,7 +82,7 @@ Respond ONLY with a valid JSON object (no markdown, no backticks):
     {"icon": "single emoji", "label": "generic item name", "note": "one short practical tip"}
   ],
   "reasoning": "2-3 sentences explaining the choices based on the weather and events, written for a parent",
-  "alexaScript": "A warm friendly 2-3 sentence morning briefing for a child. Say what to wear and why in simple terms. Mention any exciting event today. End with encouragement.",
+  "alexaScript": "A warm friendly 2-3 sentence morning briefing for a child. Start with day of the week and date. Say what to wear and why in simple terms. Mention any exciting event today. End with encouragement.",
   "weatherSummary": "one short sentence summarizing today's weather"
 }`;
 

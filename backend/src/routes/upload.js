@@ -1,6 +1,7 @@
 import { Router } from "express";
 import multer from "multer";
 import { parsePdfEvents } from "../services/parser.js";
+import { supabase } from "../supabase.js";
 
 export const uploadRouter = Router();
 
@@ -35,7 +36,14 @@ uploadRouter.post("/:profileId", upload.single("file"), async (req, res) => {
   }
 
   try {
-    const events = await parsePdfEvents(req.file.buffer, req.params.profileId);
+    // Fetch profile to get parsing notes
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("parsing_notes")
+      .eq("id", req.params.profileId)
+      .single();
+
+    const events = await parsePdfEvents(req.file.buffer, req.params.profileId, profile?.parsing_notes || "");
     res.json({
       filename: req.file.originalname,
       parsed: events.length,

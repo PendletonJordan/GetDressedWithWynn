@@ -445,6 +445,7 @@ function UploadPage({ onEventsImported }) {
   const [parsedPreview, setParsedPreview] = useState(null);
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState(null);
+  const [scannedPdf, setScannedPdf] = useState(false);
   const fileRef = useRef();
 
   const handleFiles = useCallback((incoming) => {
@@ -459,8 +460,14 @@ function UploadPage({ onEventsImported }) {
     if (!files[0]) return;
     setParsing(true);
     setError(null);
+    setScannedPdf(false);
     try {
       const result = await api.uploadPdf(files[0]);
+      if (result.error === "SCANNED_PDF") {
+        setScannedPdf(true);
+        setParsing(false);
+        return;
+      }
       if (result.error) throw new Error(result.error);
       setParsedPreview(result.events);
     } catch (err) {
@@ -484,6 +491,39 @@ function UploadPage({ onEventsImported }) {
           Upload a PDF of the school spirit day calendar or sports schedule. The agent will extract events automatically.
         </p>
         {error && <div style={{ background: "#fff0f0", border: "1px solid #f5c1c1", color: "#a32d2d", borderRadius: 8, padding: "10px 12px", fontSize: 13, marginBottom: 12 }}>⚠️ {error}</div>}
+
+        {scannedPdf && (
+          <div style={{
+            background: "#fff8e6", border: "1.5px solid #f5d78e",
+            borderRadius: 12, padding: "16px 18px", marginBottom: 12
+          }}>
+            <div style={{ fontWeight: 600, fontSize: 15, color: "#7a4f00", marginBottom: 8 }}>
+              🖨️ This PDF is a scanned image
+            </div>
+            <div style={{ fontSize: 13, color: "#7a4f00", lineHeight: 1.7, marginBottom: 12 }}>
+              This PDF was created by scanning a physical document. It contains an image of text rather than actual text, so it can't be read automatically.
+            </div>
+            <div style={{ fontSize: 13, color: "#7a4f00", lineHeight: 1.7, marginBottom: 12 }}>
+              <strong>Fix it in 3 steps:</strong><br />
+              1. Click the button below to open ilovepdf<br />
+              2. Upload your PDF and click <strong>OCR PDF</strong><br />
+              3. Download the converted file and upload it here
+            </div>
+            <a
+              href="https://www.ilovepdf.com/ocr-pdf"
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                background: "#e65c00", color: "#fff", padding: "9px 16px",
+                borderRadius: 8, fontSize: 13, fontWeight: 600,
+                textDecoration: "none", fontFamily: "'DM Sans', sans-serif"
+              }}
+            >
+              Convert PDF with ilovepdf →
+            </a>
+          </div>
+        )}
         <div
           onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
           onDragLeave={() => setDragOver(false)}

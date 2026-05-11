@@ -35,6 +35,7 @@ profileRouter.post("/", async (req, res) => {
 
 // PUT /api/profile/:id  — update profile
 profileRouter.put("/:id", async (req, res) => {
+  console.log("PUT profile body:", JSON.stringify(req.body));
   const { name, age, school, city, favorite_colors, alexa_enabled, wake_time, parsing_notes } = req.body;
 
   const { data, error } = await supabase

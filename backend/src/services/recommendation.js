@@ -59,10 +59,10 @@ Today's context:
 
 Clothing rules — always use these generic categories, never specific brands or styles:
 - Top: "short sleeve shirt" (High temperature 65°F+), "long sleeve shirt" (High temperature below 65°F)
-- Bottom: "shorts" (70°F+), "pants" (below 70°F)
+- Bottom: "shorts" (today's high 70°F+), "pants" (today's high below 70°F)
 - Outerwear (only include if needed):
-    - "light jacket" if 50–60°F or windy
-    - "cold weather jacket" if below 50°F
+    - "light jacket" if current temp is 50–60°F or windy
+    - "cold weather jacket" if current temperature is below 50°F
     - "rain jacket" if rain chance is 40%+ regardless of temp
 - Footwear: "sneakers" normally, "rain boots" if rain chance is 60%+
 - If there's a spirit day the outfit MUST follow the theme — mention the color or theme in the label (e.g. "blue long sleeve shirt")
